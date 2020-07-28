@@ -38,4 +38,33 @@ func TestTmpExecutable(t *testing.T) {
 # Which to use: Error(just mark a test as failed) or Fatal(mark a test as failed AND end execution)?
 - If continuing the test gives more information, use Error. If no more useful info, use Fatal
 
-# For now, note that http.NewRecorder is a fake response writer you can pass into writer
+# (For now) Know that http.NewRecorder is a fake response writer you can pass into writer
+
+# Writing good error messages
+- goal for error messages: tell developers what went wrong, help them debug the situation 
+- Succint but useful template: Function name with parameters if they're short. It equaled got,  wanted want. 
+-- Useful even if SomeFunc returns value & error. It's inferred we're not using
+```go
+t.Errorf("SomeFunc(%v) = %v; want %v", param, got, want)
+```
+- Similar, with err: 
+```go
+t.Errorf("SomeFunc(%v) err = %v; want %v")
+```
+- Don't worry about printing exact params into SomeFunc. For example, if p is a Person struct with many fields, and it was passed in to SomeFunc(p), we could say: `t.Errorf("SomeFunc(name=%s, age=%d)", p.Name, p.Age)`
+
+# Examples As Test Cases (package example)
+- examples can be run as test cases.
+- a reason they're valuable: incentive to keep docs/examples up to date. otherwise they will fail
+- Examples are the same as tests except: 
+1. functions start with 'Example' like funct ExampleHello() instead of TestHello()
+2. The example funcs don't take any args
+3. Need comment: `// Output:`
+- For dealing with maps/goroutines, where order will be different, use `//Unordered output:`
+- For different examples on the same function, use `ExampleHello_spanish()` to produce `Example (Spanish)` in the docs
+
+- Can run in docs like:
+`godoc -http=:8080`
+
+## Package level Examples: 
+- In order to show imports in examples, create a new file for the example. Must also have a package level const or var
