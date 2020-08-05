@@ -68,3 +68,70 @@ t.Errorf("SomeFunc(%v) err = %v; want %v")
 
 ## Package level Examples: 
 - In order to show imports in examples, create a new file for the example. Must also have a package level const or var
+
+# Table Driven Tests (package underscore)
+- with simple Table driven tests, must use Errorf in loop. If fatal is used, other rows of table won't be run
+
+# Subtests 
+- t.Run() takes a name and a subtestFunction. Signature of subTest takes t *testing.t, but doens't need the capital. Options for subtests:
+1. Anonymous closure function
+```go
+for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            if got := Camel(tt.arg); got != tt.want {
+                t.Errorf("Camel()=%v, want %v", got, tt.want)
+        }
+    })
+}
+```
+2. Named function
+```go
+for _, tt := range tests {
+        t.Run(tt.name, somesubTest)
+}
+func somesubTest(t *testing.T) {
+    // ...
+}
+```
+3. Function Returning closure
+```go
+for _, tt := range tests {
+        t.Run(tt.name, appTest(app)) {
+    }
+}
+
+func appTest(app *App) func(t *testing.T) {
+    return func(t *testing.T) {
+        // use app
+    }
+}
+```
+- Nesting in t.Run is possible
+```go
+for _, tt := range tests {
+    r.Run(tt.name, func(t *testing.T) {
+        t.Run("another subtest", func(t *testing.T) {
+            if got := Came(tt.arg); got != tt.want {
+                t.Errorf("Camel() = %v, want %v", got, tt.want)
+            }
+        })
+    })
+}
+```
+- Useful for top level with setup, then each test has different tests
+- Alternatives of test name 
+-- Instead of doing test struct with name, args, and want, can make a map[string]struct{} where string is name, and struct contains args and wants
+-- Can sometimes pass arg as name
+
+## Subtests can be failed with Fatal
+- It's useful to use fatal if we have further subchecks that are useless if we fail the first one
+- With subtests, we are able to use fatal in each subtest b/c each subtest is run in separate goroutines
+
+# TestMain
+- Steps that should be included:
+	// 0. flag.Parse() if you need flags
+	// 1. Setup anything you need
+	// 2. Run tests
+    // 3. Exit the code
+- can't fail a test in Main
+- os.Exit(exitCode) will stop the program immediately - no deferred funcs will be run

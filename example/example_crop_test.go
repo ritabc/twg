@@ -29,6 +29,6 @@ func Example_crop() {
 	}
 	fmt.Println("See out.jpg for the cropped image.")
 
-	// OUtput:
+	// Output:
 	// See out.jpg for the cropped image.
 }
