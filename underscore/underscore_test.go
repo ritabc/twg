@@ -18,7 +18,6 @@ import "testing"
 // 			t.Errorf("Camel(%q) = %q; want %q", tc.arg, got, tc.want)
 // 		}
 // 	}
-
 // }
 
 func TestCamel(t *testing.T) {

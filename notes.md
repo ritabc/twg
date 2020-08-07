@@ -135,3 +135,72 @@ for _, tt := range tests {
     // 3. Exit the code
 - can't fail a test in Main
 - os.Exit(exitCode) will stop the program immediately - no deferred funcs will be run
+
+# Running Tests In Parallel (package parallel)
+## Why to use?
+- Simiulating a real-world scenario, for eg when testing a web app that will have multiple users at once
+- Verify that a type, like a cache, is truly threadsafe
+## Why to NOT use?
+- Paralellism is not free, and could mean more work
+-- Tests can't use as many hard-coded values; eg unique email constrainst
+-- It might be complicated for tests to use shared resources, as in the same output file, or same shared DB connection
+- Don't use parallel tests just for the speed test - not worth it b/c could introduce bugs by running in parallel
+## How to use
+- Add t.Parallel() to any func you want run in parallel
+- Any tests not having this line will not run in parallel ; they will run first
+## Running subtests in parallel
+- Subtests can be run in parallel, but will only be run with their sister subtests
+- We need some way to tell when all parallel subtests are finished, in order to run teardown after that. To do so, wrap all parallel subtests in another "group" t.Run()
+## Closure Gotcha for Parallel tests
+- (Especially with loops or table driven tests) Shadow testCase variable or add another closure. If shadowing, recommended to add comment (`// Do not delete`), as the line will look like: `tt := tt`
+
+# Race Conditions : Testing them
+## What is a race condition? 
+```go
+// Given a value that multiple goroutines will write to / read from, without disregard for what other goroutines are doing to the value
+var balance = 100
+
+func main() {
+    go spend(30)
+    go spend(40)
+}
+
+func(spend(amount int) {
+    b := balance
+    time.Sleep(time.Second)
+    b -= amount
+    balance = b
+}
+```
+What are the different goroutines doing?
+```
+time  |  goroutine1  |  goroutine2   | balance
+=====================================================
+t0    |              |               | `balance := 100`
+t1    |              |`b := balance` | 100
+t1    |`b := balance`|               | 100
+t1    |`b - 30 = 70` |               | 70
+t1    |              |`b - 30 = 60`  | 60
+t1    |              |               | 60
+```
+Basically, the balance was copied in each goroutine before decremenint happened
+
+## Using race detection flag
+```bash
+$ go test -race
+$ go run -race thing.go
+$ go build -race thing.go
+$ go install -race pkg
+$ go get -race golang.org....
+```
+Will notify you if it detects a race condition
+
+Sometimes can be used: if deploying to multiple locations, one of them will be deployed with `go build -race`
+
+It doesn't always catch them., EG:
+- if the race involves a DB read/write scenario, the race isn't in memory so it won't be caught
+
+## Testing explicitly for race conditions (dir race_fail)
+Looking at code, we don't expect to have race condition
+
+But we show in the tests by explicitly testing for it that it exists
