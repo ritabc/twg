@@ -204,3 +204,20 @@ It doesn't always catch them., EG:
 Looking at code, we don't expect to have race condition
 
 But we show in the tests by explicitly testing for it that it exists
+
+# Comparing Objects for Equality (package compare)
+- Two objects with same field values but different adddresses can still be considered equal with == operator
+- Structs with func fields cannot be compared
+- Unless using reflect.DeepEqual 
+- Can use golden files to easily create the 'want' variable, for instance comparing large files/amounts of data. Human-eye check the golden file, then compare to the output
+
+# Helper comparison functions (package alert)
+- For example, when testing http responses, we don't want to recreate entire page/response
+-- if the footer changes and the footer has nothing to do with our test, we don't want to rewrite the entire test
+-- so, write helper function to check for different things within our html functions 
+- Other situations which could use helper comparison funcs: 
+-- verify specific field in struct is set
+-- verify json response has specific subset of data
+
+# Building things with helper functions
+- Candidate for helper function: db setup (package helper)
