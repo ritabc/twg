@@ -1,4 +1,4 @@
-package psql
+package builder
 
 import (
 	"database/sql"
@@ -9,7 +9,7 @@ import (
 // Common errors that you will likey want to account for in your code
 // Any other errors are wrapped with context via the github.com/pkg/errors package and returned but are harder to use a if/switch to match
 var (
-	ErrNotFound = errors.New("psql: resource could not be located")
+	ErrNotFound = errors.New("builder: resource could not be located")
 )
 
 // User is an example user model. This typically woudn't be defined in this package but is done here for simplicity

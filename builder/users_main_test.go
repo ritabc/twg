@@ -1,4 +1,4 @@
-package helper
+package builder
 
 import (
 	"database/sql"
@@ -65,6 +65,7 @@ func run(m *testing.M) int {
 }
 
 func userStore(t *testing.T) (*UserStore, func()) {
+	t.Helper() // Signify this is a helper function, don't print file & line info
 	db, err := sql.Open("postgres", "host=localhost port=5432 user=postgres sslmode=disable dbname=test_user_store")
 	if err != nil {
 		t.Fatalf("sql.Open() err = %s", err)
@@ -125,3 +126,28 @@ func testUserStore_Find(us *UserStore) func(t *testing.T) {
 		}
 	}
 }
+
+// func newServer(t *testing.T) (*httptest.Server, func()) {
+// 	t.Helper()
+// 	// Setup db & cache
+// 	db := ...
+// 	cace, err := ...
+// 	if err != nil {
+// 		t.FatalF(...)
+// 	}
+// 	h := Handler(db, cache...)
+// 	server := httptest.NewServer(h)
+// 	return server, func() {
+// 		db.Close()
+// 		cache.Close()
+// 		server.Close()
+// 	}
+// }
+
+// func TestRoutes(t *testing.T) {
+// 	server, teardown := newServer(t)
+// 	defer teardown()
+// 	t.Run("home", func(t *testing.T) {testGetRoute(t, app, "/")})
+// 	t.Run("about", func(t *testing.T) {testGetRoute(t, app, "/about")})
+// 	t.Run("contact", func(t *testing.T) {testGetRoute(t, app, "/contact")})
+// }

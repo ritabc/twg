@@ -1,4 +1,4 @@
-// package psql
+package psql
 
 // import (
 // 	"database/sql"
@@ -21,7 +21,7 @@
 // 	const (
 // 		dropDB          = `DROP DATABASE IF EXISTS test_user_store;`
 // 		createDB        = `CREATE DATABASE test_user_store;`
-// 		createUserTable = `CREATE TABLE users ( 
+// 		createUserTable = `CREATE TABLE users (
 // 							id SERIAL PRIMARY KEY,
 // 							name TEXT,
 // 							email TEXT UNIQUE NOT NULL
