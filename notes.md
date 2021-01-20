@@ -430,3 +430,20 @@ We might use mocking and an actual mock - one that tracks which methods are call
 ## Example of Faking APIs (package stripe)
 - demov0: Shows real example usage of stripe API
 - demov1: Shows test examples of faking API
+
+# Interface test suites (package suite)
+- test multiple interface implementations using the same suite of tests
+- IRL eg, function accepts io.Reader (a file, network connection, etc) and whatever the Reader is, the function does the correct thing
+- Test for propert implementation: 
+```go
+// Create variable of type interface, be implemented by type stub.UserStore : compile test
+var _ suite.UserStore = &stub.UserStore{}
+```
+
+- sometimes each implementation needs its own setup and teardown
+  * handle setup and teardown in userstore.UserStore() test function
+  * have suitetest.UserStore accept beforeEach & afterEach
+
+# Testing Subprocesses (package sub)
+- Consider: subprocesses (execs) might not exist. Create a flag. If the subprocess doesn't exist, skip the test
+- Consider: subprocesses might depend on state. Can copy dir/file to temp dir/file
