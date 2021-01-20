@@ -443,3 +443,7 @@ var _ suite.UserStore = &stub.UserStore{}
 - sometimes each implementation needs its own setup and teardown
   * handle setup and teardown in userstore.UserStore() test function
   * have suitetest.UserStore accept beforeEach & afterEach
+
+# Testing Subprocesses (package sub)
+- Consider: subprocesses (execs) might not exist. Create a flag. If the subprocess doesn't exist, skip the test
+- Consider: subprocesses might depend on state. Can copy dir/file to temp dir/file
